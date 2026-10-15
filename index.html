@@ -150,11 +150,6 @@
         </div>
 
         <div class="dato">
-          <span class="etiqueta">Cargo</span>
-          <span class="valor" id="cargo">Cargando...</span>
-        </div>
-
-        <div class="dato">
           <span class="etiqueta">Fecha de expedición</span>
           <span class="valor" id="expedicion">Cargando...</span>
         </div>
@@ -299,7 +294,7 @@
 
         setText("nombre", data.nombre);
         setText("numero-empleado", data.numero_empleado);
-        setText("nombre-empresa", data.nombre_empresa);
+        setText("nombre_empresa", data.nombre_empresa);
         setText("cargo", data.cargo);
         setText("expedicion", formatearFecha(data.expedicion));
         setText("vigencia", formatearFecha(data.vigencia));
