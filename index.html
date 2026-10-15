@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#102a43">
+  <title>Credencial OpenNet</title>
+
+  <style>
+    :root {
+      --navy: #102a43;
+      --teal: #147d92;
+      --background: #f1f5f9;
+      --text: #243b53;
+      --muted: #627d98;
+      --border: #d9e2ec;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px 14px;
+      background: var(--background);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    .card {
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 12px 35px rgba(16, 42, 67, 0.10);
+    }
+
+    .header {
+      padding: 24px;
+      color: white;
+      background: var(--navy);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+      padding: 5px;
+      object-fit: contain;
+      background: white;
+      border-radius: 12px;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 23px;
+      letter-spacing: 1px;
+    }
+
+    .brand-subtitle {
+      margin: 6px 0 0;
+      color: #c7d9e8;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .header h2 {
+      margin: 24px 0 5px;
+      font-size: 22px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #c7d9e8;
+      font-size: 13px;
+    }
+
+    .content {
+      padding: 24px;
+    }
+
+    .employee {
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .employee h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .cargo {
+      margin: 0 0 8px;
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    .employee-number {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 8px 12px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .valid {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .expired {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .unknown {
+      color: #854d0e;
+      background: #fef3c7;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px 14px;
+      padding: 22px 0;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+    }
+
+    .value {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .footer {
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .message {
+      padding: 22px;
+      border-radius: 12px;
+      background: white;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .message h2 {
+      margin-top: 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 360px) {
+      .content, .header {
+        padding: 18px;
+      }
+
+      .employee h1 {
+        font-size: 21px;
+      }
+
+      .details {
+        gap: 18px 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <div id="loading" class="message">
+      Cargando información de la credencial...
+    </div>
+
+    <div id="error" class="message hidden" role="alert">
+      <h2>No se pudo cargar la credencial</h2>
+      <p id="error-detail"></p>
+    </div>
+
+    <article id="credential" class="card hidden">
+      <header class="header">
+        <div class="brand">
+          <img
+            class="logo"
+            src="img/logo.png"
+            alt="Logo de OpenNet"
+            onerror="this.hidden=true"
+          >
+          <div>
+            <h1 class="brand-name">OPENNET</h1>
+            <p class="brand-subtitle">
+              INGENIERÍA E INFRAESTRUCTURA
+            </p>
+          </div>
+        </div>
+
+        <h2>Credencial de empleado</h2>
+        <p>Identificación institucional</p>
+      </header>
+
+      <section class="content">
+        <div class="employee">
+          <h1 id="nombre"></h1>
+          <p class="cargo" id="cargo"></p>
+          <div class="employee-number">
+            Número de empleado: <strong id="numero-empleado"></strong>
+          </div>
+          <div id="status" class="status unknown">
+            Verificando vigencia...
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="field">
+            <span class="label">FECHA DE EXPEDICIÓN</span>
+            <div class="value" id="expedicion"></div>
+          </div>
+
+          <div class="field">
+            <span class="label">VIGENCIA HASTA</span>
+            <div class="value" id="vigencia"></div>
+          </div>
+
+          <div class="field full">
+            <span class="label">EMPRESA</span>
+            <div class="value" id="nombre-empresa"></div>
+          </div>
+
+          <div class="field full">
+            <span class="label">NÚMERO DE EMPRESA</span>
+            <div class="value" id="numero-empresa"></div>
+          </div>
+
+          <div class="field full">
+            <span class="label">TIPO SANGUÍNEO</span>
+            <div class="value" id="tipo-sanguineo"></div>
+          </div>
+        </div>
+
+        <footer class="footer">
+          Credencial informativa de OpenNet.<br>
+          La información publicada no constituye por sí sola
+          una validación de autenticidad.
+        </footer>
+      </section>
+    </article>
+  </main>
+
+  <script>
+    const loading = document.getElementById("loading");
+    const errorBox = document.getElementById("error");
+    const errorDetail = document.getElementById("error-detail");
+    const credential = document.getElementById("credential");
+
+    function showError(message) {
+      loading.classList.add("hidden");
+      credential.classList.add("hidden");
+      errorBox.classList.remove("hidden");
+      errorDetail.textContent = message;
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent =
+        value == null || value === "" ? "No especificado" : value;
+    }
+
+    function formatDate(value) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value || "")) {
+        return null;
+      }
+
+      const [year, month, day] = value.split("-").map(Number);
+      const date = new Date(Date.UTC(year, month - 1, day));
+
+      // Evita aceptar fechas como 2026-12-39.
+      if (
+        date.getUTCFullYear() !== year ||
+        date.getUTCMonth() !== month - 1 ||
+        date.getUTCDate() !== day
+      ) {
+        return null;
+      }
+
+      return date.toLocaleDateString("es-MX", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "UTC"
+      });
+    }
+
+    function setStatus(value) {
+      const status = document.getElementById("status");
+      const expiration = formatDate(value);
+
+      status.className = "status";
+
+      if (!expiration) {
+        status.textContent = "Vigencia no válida";
+        status.classList.add("unknown");
+        return;
+      }
+
+      const [year, month, day] = value.split("-").map(Number);
+      const expiry = Date.UTC(year, month - 1, day);
+      const now = new Date();
+      const today = Date.UTC(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      );
+
+      if (expiry < today) {
+        status.textContent = "Credencial vencida";
+        status.classList.add("expired");
+      } else {
+        status.textContent = "Dentro de su vigencia";
+        status.classList.add("valid");
+      }
+    }
+
+    async function loadCredential() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+
+      if (!id || !/^[a-zA-Z0-9_-]+$/.test(id)) {
+        showError(
+          "El enlace no contiene un identificador válido. " +
+          "Verifica el código QR."
+        );
+        return;
+      }
+
+      // Ruta relativa: funciona bajo /credenciales-empleados/.
+      const jsonUrl = new URL(
+        "empleados/" + encodeURIComponent(id) + ".json",
+        window.location.href
+      );
+
+      try {
+        const response = await fetch(jsonUrl.href, {
+          cache: "no-store"
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            "No se encontró el archivo " + id +
+            ".json (HTTP " + response.status + ")."
+          );
+        }
+
+        const data = await response.json();
+
+        if (
+          !data ||
+          typeof data.nombre !== "string" ||
+          typeof data.numero_empleado !== "string"
+        ) {
+          throw new Error("El JSON no tiene la estructura esperada.");
+        }
+
+        setText("nombre", data.nombre);
+        setText("cargo", data.cargo);
+        setText("numero-empleado", data.numero_empleado);
+        setText("expedicion", formatDate(data.expedicion) || "Fecha no válida");
+        setText("vigencia", formatDate(data.vigencia) || "Fecha no válida");
+        setText("nombre-empresa", data.nombre_empresa);
+        setText("numero-empresa", data.numero_empresa);
+        setText("tipo-sanguineo", data.tipo_sanguineo);
+
+        setStatus(data.vigencia);
+
+        loading.classList.add("hidden");
+        credential.classList.remove("hidden");
+      } catch (error) {
+        showError(
+          error.message +
+          " Comprueba que el archivo esté publicado en la carpeta " +
+          "'empleados' y que el JSON sea válido."
+        );
+      }
+    }
+
+    loadCredential();
+  </script>
+</body>
+</html>
